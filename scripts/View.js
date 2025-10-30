@@ -1,3 +1,0 @@
-const View = {};
-
-export { View };

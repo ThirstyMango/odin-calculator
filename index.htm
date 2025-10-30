@@ -4,31 +4,65 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Odin - calculator</title>
-    <script type="module" src="./main.js"></script>
+    <script type="module" defer src="./main.js"></script>
   </head>
   <body>
     <div class="app">
-      <output class="app__screen">690 / 3</output>
+      <output class="app__screen">Start calculating :)</output>
       <div class="app__controls">
         <div class="controls controls--left">
-          <button class="controls__btn">1</button>
-          <button class="controls__btn">2</button>
-          <button class="controls__btn">3</button>
-          <button class="controls__btn">4</button>
-          <button class="controls__btn">5</button>
-          <button class="controls__btn">6</button>
-          <button class="controls__btn">7</button>
-          <button class="controls__btn">8</button>
-          <button class="controls__btn">9</button>
-          <button class="controls__btn controls__btn--alert">C</button>
-          <button class="controls__btn">0</button>
+          <button data-btn-type="num" class="controls__btn" value="1">1</button>
+          <button data-btn-type="num" class="controls__btn" value="2">2</button>
+          <button data-btn-type="num" class="controls__btn" value="3">3</button>
+          <button data-btn-type="num" class="controls__btn" value="4">4</button>
+          <button data-btn-type="num" class="controls__btn" value="5">5</button>
+          <button data-btn-type="num" class="controls__btn" value="6">6</button>
+          <button data-btn-type="num" class="controls__btn" value="7">7</button>
+          <button data-btn-type="num" class="controls__btn" value="8">8</button>
+          <button data-btn-type="num" class="controls__btn" value="9">9</button>
+          <button
+            data-btn-type="clear"
+            class="controls__btn controls__btn--alert"
+          >
+            C
+          </button>
+          <button data-btn-type="num" class="controls__btn" value="0">0</button>
         </div>
         <div class="controls controls--right">
-          <button class="controls__btn controls__btn--special">+</button>
-          <button class="controls__btn controls__btn--special">-</button>
-          <button class="controls__btn controls__btn--special">*</button>
-          <button class="controls__btn controls__btn--special">/</button>
-          <button class="controls__btn control__btn--large">=</button>
+          <button
+            data-btn-type="operator"
+            class="controls__btn controls__btn--special"
+            value="+"
+          >
+            +
+          </button>
+          <button
+            data-btn-type="operator"
+            class="controls__btn controls__btn--special"
+            value="-"
+          >
+            -
+          </button>
+          <button
+            data-btn-type="operator"
+            class="controls__btn controls__btn--special"
+            value="*"
+          >
+            *
+          </button>
+          <button
+            data-btn-type="operator"
+            class="controls__btn controls__btn--special"
+            value="/"
+          >
+            /
+          </button>
+          <button
+            data-btn-type="submit"
+            class="controls__btn control__btn--large"
+          >
+            =
+          </button>
         </div>
       </div>
     </div>

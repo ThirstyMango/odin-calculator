@@ -25,7 +25,7 @@ const Calculator = {
         result = this.multiply(n1, n2);
         break;
       case "/":
-        result = this.multiply(n1, n2);
+        result = this.divide(n1, n2);
         break;
     }
     return result;
