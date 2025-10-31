@@ -1,12 +1,8 @@
 /* Boilerplate */
 :root {
-  --blue-100: #caf0f8;
-  --blue-200: #ade8f4;
-  --blue-300: #90e0ef;
-  --blue-400: #48cae4;
-  --blue-500: #0096c7;
-  --blue-600: #0077b6;
-  --blue-700: #03045e;
+  --col-blue: #caf0f8;
+  --col-submit: #aceeb2;
+  --col-alert: #efa8a8;
   font-size: 16px;
 }
 
@@ -26,19 +22,74 @@ body {
   padding: 0;
 }
 
+@keyframes light-pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+
 /* Main */
 .app {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  border: 3px solid var(--blue-100);
+  border: 3px solid black;
+  border-radius: 1rem;
   padding: 2rem 4rem;
+  text-align: center;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 }
 
 .app__screen {
-  text-align: end;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  animation: 1s infinite alternate light-pulse ease-in-out;
 }
 
 .app__controls {
   display: flex;
+  gap: 1rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+.controls__btn {
+  font-weight: 700;
+  font-size: 1.1rem;
+  background-color: white;
+  padding: 0.5rem;
+  border-radius: 0.4rem;
+  flex: 0 1 32%;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border: 0.1rem solid gray;
+}
+
+.controls__btn:hover {
+  cursor: pointer;
+  background-color: var(--col-blue);
+}
+
+.controls__btn--alert:hover {
+  background-color: var(--col-alert);
+}
+
+.controls__btn--special {
+  flex: 0 1 48%;
+}
+
+.controls__btn--submit {
+  flex: 0 1 100%;
+}
+
+.controls__btn--submit:hover {
+  background-color: var(--col-submit);
 }

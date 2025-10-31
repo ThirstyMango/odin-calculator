@@ -25,10 +25,17 @@ const App = {
     }
   },
 
-  resetApp(firstOperand = 0, secondOperand = 0, operator = null) {
+  resetApp(firstOperand = null, secondOperand = null, operator = null) {
     this.firstOperand = firstOperand;
     this.operator = operator;
     this.secondOperand = secondOperand;
+
+    if (firstOperand === null) {
+      DOM.screen.textContent = "Start calculating";
+      return;
+    }
+
+    DOM.screen.textContent = firstOperand;
   },
 
   // Helper event handlers
@@ -52,7 +59,7 @@ const App = {
     // Second operand not yet present
     if (this.secondOperand === null) {
       this.secondOperand = num;
-      DOM.screen.textContent = `${this.firstOperand}${this.operator}${this.secondOperand}`;
+      DOM.screen.textContent = `${this.firstOperand} ${this.operator} ${this.secondOperand}`;
       return;
     }
 
@@ -65,7 +72,7 @@ const App = {
     if (this.operator) return;
 
     this.operator = e.target.value;
-    DOM.screen.textContent = `${this.firstOperand}${this.operator}`;
+    DOM.screen.textContent = `${this.firstOperand} ${this.operator}`;
   },
 
   handleClearClick() {
