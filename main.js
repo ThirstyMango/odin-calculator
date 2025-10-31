@@ -2,9 +2,9 @@ import { DOM } from "./scripts/DOM.js";
 import { Calculator } from "./scripts/Calculator.js";
 
 const App = {
-  firstOperand: 0,
+  firstOperand: null,
   operator: null,
-  secondOperand: 0,
+  secondOperand: null,
 
   handleControlClick(e) {
     if (typeof e.target.dataset.btnType === undefined) return;
@@ -33,17 +33,37 @@ const App = {
 
   // Helper event handlers
   handleNumClick(e) {
-    if (!this.operator) {
-      this.firstOperand = this.firstOperand * 10 + parseFloat(e.target.value);
-      DOM.screen.textContent = `${this.firstOperand}`;
+    const num = parseFloat(e.target.value);
+
+    // First operand not yet present
+    if (this.firstOperand === null) {
+      this.firstOperand = num;
+      DOM.screen.textContent = this.firstOperand;
       return;
     }
 
-    this.secondOperand = this.secondOperand * 10 + parseFloat(e.target.value);
+    // Operator not present -> user still writing the first number
+    if (this.operator === null) {
+      this.firstOperand = this.firstOperand * 10 + num;
+      DOM.screen.textContent = this.firstOperand;
+      return;
+    }
+
+    // Second operand not yet present
+    if (this.secondOperand === null) {
+      this.secondOperand = num;
+      DOM.screen.textContent = `${this.firstOperand}${this.operator}${this.secondOperand}`;
+      return;
+    }
+
+    // Both operands and an operator present
+    this.secondOperand = this.secondOperand * 10 + num;
     DOM.screen.textContent = `${this.firstOperand}${this.operator}${this.secondOperand}`;
   },
 
   handleOpClick(e) {
+    if (this.operator) return;
+
     this.operator = e.target.value;
     DOM.screen.textContent = `${this.firstOperand}${this.operator}`;
   },
