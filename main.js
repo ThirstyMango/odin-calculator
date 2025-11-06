@@ -2,9 +2,9 @@ import { DOM } from "./scripts/DOM.js";
 import { Calculator } from "./scripts/Calculator.js";
 
 const App = {
-  firstOperand: null,
+  firstOperand: "",
   operator: null,
-  secondOperand: null,
+  secondOperand: "",
   justOperated: false,
 
   handleControlClick(e) {
@@ -13,6 +13,9 @@ const App = {
     switch (e.target.dataset.btnType) {
       case "num":
         this.handleNumClick(e);
+        break;
+      case "dec":
+        this.handleDecClick(e);
         break;
       case "operator":
         this.handleOpClick(e);
@@ -26,57 +29,51 @@ const App = {
     }
   },
 
-  resetApp(firstOperand = null, secondOperand = null, operator = null) {
+  resetApp(firstOperand = "", secondOperand = "", operator = null) {
     this.firstOperand = firstOperand;
     this.operator = operator;
     this.secondOperand = secondOperand;
 
-    if (firstOperand === null) {
-      DOM.screen.textContent = "Start calculating";
+    if (firstOperand === "") {
+      this.view("Start calculating");
       return;
     }
 
-    DOM.screen.textContent = firstOperand;
+    this.view(this.firstOperand);
+  },
+
+  view(message) {
+    console.log(message);
+    DOM.screen.textContent = message;
   },
 
   // Helper event handlers
   handleNumClick(e) {
-    const num = parseFloat(e.target.value);
+    // Working with numbers as if they were strings
+    const num = e.target.value;
 
     // First num in after enter was pressed
     if (this.justOperated) {
       this.justOperated = false;
-      this.firstOperand = null;
-    }
-
-    // First operand not yet present
-    if (this.firstOperand === null) {
-      this.firstOperand = num;
-      DOM.screen.textContent = this.firstOperand;
-      return;
+      this.firstOperand = "";
     }
 
     // Operator not present -> user still writing the first number
     if (this.operator === null) {
-      this.firstOperand = this.firstOperand * 10 + num;
-      DOM.screen.textContent = this.firstOperand;
-      return;
-    }
-
-    // Second operand not yet present
-    if (this.secondOperand === null) {
-      this.secondOperand = num;
-      DOM.screen.textContent = `${this.firstOperand} ${this.operator} ${this.secondOperand}`;
+      this.firstOperand += num;
+      this.view(this.firstOperand);
       return;
     }
 
     // Both operands and an operator present
-    this.secondOperand = this.secondOperand * 10 + num;
-    DOM.screen.textContent = `${this.firstOperand} ${this.operator} ${this.secondOperand}`;
+    this.secondOperand += num;
+    this.view(`${this.firstOperand} ${this.operator} ${this.secondOperand}`);
   },
 
   handleOpClick(e) {
-    if (this.firstOperand === null) return;
+    if (this.firstOperand === "") return;
+
+    DOM.btnDecimal.disabled = false;
 
     if (this.operator) {
       this.handleSubmitClick(e);
@@ -84,7 +81,7 @@ const App = {
 
     this.justOperated = false;
     this.operator = e.target.value;
-    DOM.screen.textContent = `${this.firstOperand} ${this.operator}`;
+    this.view(`${this.firstOperand} ${this.operator}`);
   },
 
   handleClearClick() {
@@ -94,7 +91,7 @@ const App = {
   },
 
   handleSubmitClick() {
-    if (this.secondOperand === null) return;
+    if (this.secondOperand === "") return;
     else if (this.operator === "/" && this.secondOperand === 0) {
       this.resetApp();
       DOM.screen.textContent = "Division by 0.";
@@ -104,15 +101,24 @@ const App = {
     const result =
       Math.round(
         Calculator.operate(
-          this.firstOperand,
-          this.secondOperand,
+          parseFloat(this.firstOperand),
+          parseFloat(this.secondOperand),
           this.operator
         ) * 100
       ) / 100;
 
     this.justOperated = true;
-    DOM.screen.textContent = result;
+    DOM.btnDecimal.disabled = false;
+    DOM.screen.textContent = String(result);
     this.resetApp(result);
+  },
+
+  handleDecClick(e) {
+    // Neither number present
+    if (this.firstOperand === "") return;
+
+    DOM.btnDecimal.disabled = true;
+    this.handleNumClick(e); // Works the same as number, just adding a decimal instead of it
   },
 
   startApp() {
