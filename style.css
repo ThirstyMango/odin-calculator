@@ -82,10 +82,6 @@ body {
   flex: 0 1 48%;
 }
 
-.controls__btn--submit {
-  flex: 0 1 100%;
-}
-
 .controls__btn--submit:hover {
   background-color: var(--col-submit);
 }
