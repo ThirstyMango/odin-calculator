@@ -23,6 +23,9 @@ const App = {
       case "clear":
         this.handleClearClick();
         break;
+      case "backspace":
+        this.handleBackSpaceClick();
+        break;
       case "submit":
         this.handleSubmitClick();
         break;
@@ -33,17 +36,17 @@ const App = {
     this.firstOperand = firstOperand;
     this.operator = operator;
     this.secondOperand = secondOperand;
+    DOM.btnDecimal.disabled = false;
 
     if (firstOperand === "") {
-      this.view("Start calculating");
+      this.view();
       return;
     }
 
     this.view(this.firstOperand);
   },
 
-  view(message) {
-    console.log(message);
+  view(message = "Start calculating") {
     DOM.screen.textContent = message;
   },
 
@@ -60,12 +63,14 @@ const App = {
 
     // Operator not present -> user still writing the first number
     if (this.operator === null) {
+      if (num === "0" && this.firstOperand === "0") return;
       this.firstOperand += num;
       this.view(this.firstOperand);
       return;
     }
 
     // Both operands and an operator present
+    if (num === "0" && this.secondOperand === "0") return;
     this.secondOperand += num;
     this.view(`${this.firstOperand} ${this.operator} ${this.secondOperand}`);
   },
@@ -98,14 +103,17 @@ const App = {
       return;
     }
 
+    const nDecimals = 6;
     const result =
       Math.round(
         Calculator.operate(
           parseFloat(this.firstOperand),
           parseFloat(this.secondOperand),
           this.operator
-        ) * 100
-      ) / 100;
+        ) *
+          10 ** nDecimals
+      ) /
+      10 ** nDecimals;
 
     this.justOperated = true;
     DOM.btnDecimal.disabled = false;
@@ -117,8 +125,38 @@ const App = {
     // Neither number present
     if (this.firstOperand === "") return;
 
+    // User just entered the operator
+    if (this.justOperated) return;
+
     DOM.btnDecimal.disabled = true;
     this.handleNumClick(e); // Works the same as number, just adding a decimal instead of it
+  },
+
+  removeLastChar(string) {
+    return string.slice(0, string.length - 1);
+  },
+
+  handleBackSpaceClick() {
+    if (!this.firstOperand) return;
+
+    if (!this.operator) {
+      this.firstOperand = this.removeLastChar(this.firstOperand);
+      if (this.firstOperand === "") {
+        this.view();
+        return;
+      }
+      this.view(`${this.firstOperand}`);
+      return;
+    }
+
+    if (!this.secondOperand) {
+      this.operator = null;
+      this.view(`${this.firstOperand} ${this.operator}`);
+      return;
+    }
+
+    this.secondOperand = this.removeLastChar(this.secondOperand);
+    this.view(`${this.firstOperand} ${this.operator} ${this.secondOperand}`);
   },
 
   startApp() {
