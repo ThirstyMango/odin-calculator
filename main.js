@@ -12,13 +12,15 @@ const App = {
 
     switch (e.target.dataset.btnType) {
       case "num":
-        this.handleNumClick(e);
+        const num = e.target.value;
+        this.handleNumClick(num);
         break;
       case "dec":
-        this.handleDecClick(e);
+        this.handleDecClick();
         break;
       case "operator":
-        this.handleOpClick(e);
+        const operator = e.target.value;
+        this.handleOpClick(operator);
         break;
       case "clear":
         this.handleClearClick();
@@ -30,6 +32,27 @@ const App = {
         this.handleSubmitClick();
         break;
     }
+
+    this.view();
+  },
+
+  handleInputChange(e) {
+    const input = e.data;
+
+    if (this.isNumeric(input)) {
+      this.handleNumClick(input);
+    }
+
+    const validOpers = ["/", "*", "+", "-"];
+    if (validOpers.includes(input)) {
+      this.handleOpClick(input);
+    }
+
+    if (input === null) {
+      this.handleBackSpaceClick();
+    }
+
+    this.view();
   },
 
   resetApp(firstOperand = "", secondOperand = "", operator = null) {
@@ -37,24 +60,29 @@ const App = {
     this.operator = operator;
     this.secondOperand = secondOperand;
     DOM.btnDecimal.disabled = false;
+  },
 
-    if (firstOperand === "") {
-      this.view();
+  view() {
+    if (this.firstOperand === null) {
+      DOM.screen.value = "";
       return;
     }
 
-    this.view(this.firstOperand);
-  },
+    if (this.operator === null) {
+      DOM.screen.value = `${this.firstOperand}`;
+      return;
+    }
 
-  view(message = "Start calculating") {
-    DOM.screen.textContent = message;
+    if (this.secondOperand === null) {
+      DOM.screen.value = `${this.firstOperand} ${this.operator}`;
+      return;
+    }
+
+    DOM.screen.value = `${this.firstOperand} ${this.operator} ${this.secondOperand}`;
   },
 
   // Helper event handlers
-  handleNumClick(e) {
-    // Working with numbers as if they were strings
-    const num = e.target.value;
-
+  handleNumClick(num) {
     // First num in after enter was pressed
     if (this.justOperated) {
       this.justOperated = false;
@@ -65,28 +93,30 @@ const App = {
     if (this.operator === null) {
       if (num === "0" && this.firstOperand === "0") return;
       this.firstOperand += num;
-      this.view(this.firstOperand);
       return;
     }
 
     // Both operands and an operator present
     if (num === "0" && this.secondOperand === "0") return;
     this.secondOperand += num;
-    this.view(`${this.firstOperand} ${this.operator} ${this.secondOperand}`);
   },
 
-  handleOpClick(e) {
-    if (this.firstOperand === "") return;
+  handleOpClick(operator) {
+    if (this.isUnaryMinus(operator)) {
+      this.handleNumClick("-");
+      return;
+    }
+
+    if (this.firstOperand === "" || this.firstOperand === "-") return;
 
     DOM.btnDecimal.disabled = false;
 
-    if (this.operator) {
-      this.handleSubmitClick(e);
+    if (this.secondOperand) {
+      this.handleSubmitClick();
     }
 
     this.justOperated = false;
-    this.operator = e.target.value;
-    this.view(`${this.firstOperand} ${this.operator}`);
+    this.operator = operator;
   },
 
   handleClearClick() {
@@ -118,10 +148,10 @@ const App = {
     this.justOperated = true;
     DOM.btnDecimal.disabled = false;
     DOM.screen.textContent = String(result);
-    this.resetApp(result);
+    this.resetApp(String(result));
   },
 
-  handleDecClick(e) {
+  handleDecClick() {
     // Neither number present
     if (this.firstOperand === "") return;
 
@@ -129,7 +159,7 @@ const App = {
     if (this.justOperated) return;
 
     DOM.btnDecimal.disabled = true;
-    this.handleNumClick(e); // Works the same as number, just adding a decimal instead of it
+    this.handleNumClick("."); // Works the same as number, just adding a decimal instead of it
   },
 
   removeLastChar(string) {
@@ -137,31 +167,38 @@ const App = {
   },
 
   handleBackSpaceClick() {
+    this.justOperated = false;
+
     if (!this.firstOperand) return;
 
     if (!this.operator) {
       this.firstOperand = this.removeLastChar(this.firstOperand);
-      if (this.firstOperand === "") {
-        this.view();
-        return;
-      }
-      this.view(`${this.firstOperand}`);
-      return;
     }
 
     if (!this.secondOperand) {
       this.operator = null;
-      this.view(`${this.firstOperand} ${this.operator}`);
-      return;
     }
 
     this.secondOperand = this.removeLastChar(this.secondOperand);
-    this.view(`${this.firstOperand} ${this.operator} ${this.secondOperand}`);
   },
 
   startApp() {
     DOM.controlsContainer.addEventListener("click", (e) =>
       this.handleControlClick(e)
+    );
+    DOM.screen.addEventListener("input", (e) => this.handleInputChange(e));
+  },
+
+  // Validating
+  isNumeric(number) {
+    return !isNaN(number) && number !== null && number !== undefined;
+  },
+
+  isUnaryMinus(operator) {
+    return (
+      operator === "-" &&
+      (this.firstOperand === "" ||
+        (this.secondOperand === "" && this.operator !== null))
     );
   },
 };
