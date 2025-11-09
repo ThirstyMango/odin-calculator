@@ -167,11 +167,16 @@ const App = {
   },
 
   handleBackSpaceClick() {
-    this.justOperated = false;
+    if (this.justOperated) {
+      this.justOperated = false;
+      this.handleClearClick();
+      return;
+    }
 
     if (!this.firstOperand) return;
 
     if (!this.operator) {
+      if (this.firstOperand.at(-1) === ".") DOM.btnDecimal.disabled = false;
       this.firstOperand = this.removeLastChar(this.firstOperand);
     }
 
@@ -179,6 +184,7 @@ const App = {
       this.operator = null;
     }
 
+    if (this.secondOperand.at(-1) === ".") DOM.btnDecimal.disabled = false;
     this.secondOperand = this.removeLastChar(this.secondOperand);
   },
 
