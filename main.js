@@ -8,9 +8,10 @@ const App = {
   justOperated: false,
 
   handleControlClick(e) {
-    if (typeof e.target.dataset.btnType === undefined) return;
+    const btnType = e.target.dataset.btnType;
+    if (typeof btnType === undefined) return;
 
-    switch (e.target.dataset.btnType) {
+    switch (btnType) {
       case "num":
         const num = e.target.value;
         this.handleNumClick(num);
@@ -38,17 +39,13 @@ const App = {
 
   handleInputChange(e) {
     const input = e.data;
+    const validOpers = ["/", "*", "+", "-"];
 
     if (this.isNumeric(input)) {
       this.handleNumClick(input);
-    }
-
-    const validOpers = ["/", "*", "+", "-"];
-    if (validOpers.includes(input)) {
+    } else if (validOpers.includes(input)) {
       this.handleOpClick(input);
-    }
-
-    if (input === null) {
+    } else if (input === null) {
       this.handleBackSpaceClick();
     }
 
@@ -121,12 +118,11 @@ const App = {
 
   handleClearClick() {
     this.justOperated = false;
-    DOM.screen.textContent = "";
     this.resetApp();
   },
 
   handleSubmitClick() {
-    if (this.secondOperand === "") return;
+    if (this.secondOperand === "" || this.secondOperand === "-") return;
     else if (this.operator === "/" && this.secondOperand === 0) {
       this.resetApp();
       DOM.screen.textContent = "Division by 0.";
@@ -167,16 +163,11 @@ const App = {
   },
 
   handleBackSpaceClick() {
-    if (this.justOperated) {
-      this.justOperated = false;
-      this.handleClearClick();
-      return;
-    }
-
     if (!this.firstOperand) return;
 
     if (!this.operator) {
       if (this.firstOperand.at(-1) === ".") DOM.btnDecimal.disabled = false;
+      this.justOperated = false;
       this.firstOperand = this.removeLastChar(this.firstOperand);
     }
 
